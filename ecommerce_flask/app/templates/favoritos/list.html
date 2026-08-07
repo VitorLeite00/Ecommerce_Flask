@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Meus Favoritos{% endblock %}
+{% block content %}
+<h1>Minhas Listas de Favoritos</h1>
+<p><a class="btn" href="{{ url_for('favoritos.nova_lista') }}">+ Nova Lista</a></p>
+<ul>
+  {% for l in listas %}
+  <li><a href="{{ url_for('favoritos.detalhe', id_lista=l.id) }}">{{ l.nome_lista }}</a></li>
+  {% else %}
+  <li>Você ainda não criou nenhuma lista de favoritos.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

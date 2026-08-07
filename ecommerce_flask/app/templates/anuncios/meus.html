@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Meus Anúncios{% endblock %}
+{% block content %}
+<h1>Meus Anúncios</h1>
+<p><a class="btn" href="{{ url_for('anuncios.novo') }}">+ Novo Anúncio</a></p>
+<table>
+  <tr><th>Título</th><th>Preço</th><th>Status</th><th>Ações</th></tr>
+  {% for a in anuncios %}
+  <tr>
+    <td><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></td>
+    <td>R$ {{ '%.2f'|format(a.preco) }}</td>
+    <td><span class="badge {{ a.status }}">{{ a.status }}</span></td>
+    <td><a href="{{ url_for('anuncios.editar', id_anuncio=a.id) }}">Editar</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="4">Você ainda não publicou anúncios.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

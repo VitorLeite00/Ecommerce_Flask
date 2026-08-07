@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Perguntas Recebidas{% endblock %}
+{% block content %}
+<h1>Perguntas Recebidas</h1>
+{% for p in perguntas %}
+<div class="box" style="margin-bottom:12px;">
+  <p><strong>Anúncio:</strong> {{ anuncios_por_id[p.id_anuncio].titulo }}</p>
+  <p><strong>Pergunta:</strong> {{ p.texto_pergunta }}</p>
+  {% if p.texto_resposta %}
+    <p><strong>Resposta:</strong> {{ p.texto_resposta }}</p>
+  {% else %}
+    <form method="post" action="{{ url_for('perguntas.responder', id_pergunta=p.id) }}">
+      <input type="text" name="texto_resposta" placeholder="Digite sua resposta" required>
+      <button type="submit">Responder</button>
+    </form>
+  {% endif %}
+</div>
+{% else %}
+<p>Nenhuma pergunta recebida ainda.</p>
+{% endfor %}
+{% endblock %}

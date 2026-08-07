@@ -1,0 +1,137 @@
+* { box-sizing: border-box; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: #f4f6f8;
+  color: #222;
+}
+.navbar {
+  background: #1a3c5e;
+  color: white;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.navbar-brand a {
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+}
+.navbar nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.navbar nav a, .navbar nav span {
+  color: #dce6f0;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+.navbar nav a:hover, .navbar nav span:hover {
+  color: white;
+  text-decoration: underline;
+}
+.dropdown { position: relative; }
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background: #2c5f8a;
+  min-width: 180px;
+  padding: 8px 0;
+  z-index: 10;
+  border-radius: 4px;
+  top: 22px;
+}
+.dropdown:hover .dropdown-content { display: block; }
+.dropdown-content a {
+  display: block;
+  padding: 6px 14px;
+}
+.container {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+.card, .box {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 14px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+h1, h2 { color: #1a3c5e; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-bottom: 20px;
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 14px;
+}
+th { background: #2c5f8a; color: white; }
+form { margin-bottom: 14px; }
+input, textarea, select {
+  padding: 6px 8px;
+  margin: 4px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+}
+button {
+  background: #2c5f8a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+button:hover { background: #1a3c5e; }
+.btn {
+  display: inline-block;
+  background: #2c5f8a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 6px;
+}
+.btn:hover { background: #1a3c5e; }
+.flashes {
+  list-style: none;
+  padding: 10px 14px;
+  background: #dff0d8;
+  border: 1px solid #b2d8a3;
+  border-radius: 4px;
+}
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  color: white;
+}
+.badge.disponivel { background: #3d7a3d; }
+.badge.vendido { background: #a33; }
+footer {
+  text-align: center;
+  padding: 16px;
+  color: #888;
+  font-size: 12px;
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Início{% endblock %} | Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="navbar">
+    <div class="navbar-brand"><a href="{{ url_for('main.index') }}">Marketplace</a></div>
+    <nav>
+      <a href="{{ url_for('main.index') }}">Início</a>
+      <a href="{{ url_for('anuncios.listar') }}">Anúncios</a>
+      <a href="{{ url_for('categorias.listar') }}">Categorias</a>
+      <a href="{{ url_for('anuncios.meus_anuncios') }}">Meus Anúncios</a>
+      <a href="{{ url_for('perguntas.recebidas') }}">Perguntas Recebidas</a>
+      <a href="{{ url_for('favoritos.minhas_listas') }}">Favoritos</a>
+      <div class="dropdown">
+        <span>Relatórios &#9662;</span>
+        <div class="dropdown-content">
+          <a href="{{ url_for('relatorios.vendas') }}">Relatório de Vendas</a>
+          <a href="{{ url_for('relatorios.compras') }}">Relatório de Compras</a>
+        </div>
+      </div>
+      <a href="{{ url_for('usuarios.perfil') }}">Perfil</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+        {% for m in messages %}<li>{{ m }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>Trabalho acadêmico — Framework Flask — Sistema de E-commerce</p>
+  </footer>
+</body>
+</html>

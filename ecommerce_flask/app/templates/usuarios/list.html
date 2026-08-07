@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Usuários{% endblock %}
+{% block content %}
+<h1>Usuários cadastrados</h1>
+<table>
+  <tr><th>Nome</th><th>Email</th><th>Cadastrado em</th></tr>
+  {% for u in usuarios %}
+  <tr>
+    <td><a href="{{ url_for('usuarios.detalhe', id_usuario=u.id) }}">{{ u.nome }}</a></td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.data_cadastro or '-' }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

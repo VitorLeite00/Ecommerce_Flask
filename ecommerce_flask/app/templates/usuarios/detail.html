@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}{{ usuario.nome }}{% endblock %}
+{% block content %}
+<h1>{{ usuario.nome }}</h1>
+<p><strong>Email:</strong> {{ usuario.email }}</p>
+
+<h2>Anúncios deste usuário</h2>
+<div class="grid">
+  {% for a in anuncios %}
+  <div class="card">
+    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+  </div>
+  {% else %}
+  <p>Nenhum anúncio disponível.</p>
+  {% endfor %}
+</div>
+{% endblock %}

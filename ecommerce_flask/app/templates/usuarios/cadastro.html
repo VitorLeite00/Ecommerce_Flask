@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Cadastro{% endblock %}
+{% block content %}
+<h1>Criar conta</h1>
+<form method="post">
+  <label>Nome</label>
+  <input type="text" name="nome" required>
+  <label>Email</label>
+  <input type="email" name="email" required>
+  <label>Senha</label>
+  <input type="password" name="senha" required>
+  <button type="submit">Cadastrar</button>
+</form>
+<p>Já tem conta? <a href="{{ url_for('usuarios.login') }}">Entrar</a></p>
+{% endblock %}

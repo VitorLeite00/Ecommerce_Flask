@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Meu Perfil{% endblock %}
+{% block content %}
+<h1>Meu Perfil</h1>
+<div class="box">
+  <p><strong>Nome:</strong> {{ usuario.nome }}</p>
+  <p><strong>Email:</strong> {{ usuario.email }}</p>
+  <p><strong>Cadastrado em:</strong> {{ usuario.data_cadastro or '-' }}</p>
+</div>
+
+<h2>Meus anúncios</h2>
+<ul>
+  {% for a in anuncios %}
+  <li><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a> — R$ {{ '%.2f'|format(a.preco) }}</li>
+  {% else %}
+  <li>Você ainda não publicou anúncios.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

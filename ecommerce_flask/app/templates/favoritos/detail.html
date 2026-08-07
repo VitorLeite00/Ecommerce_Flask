@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ lista.nome_lista }}{% endblock %}
+{% block content %}
+<h1>Lista: {{ lista.nome_lista }}</h1>
+<div class="grid">
+  {% for i in itens %}
+  {% set a = anuncios_por_id[i.id_anuncio] %}
+  <div class="card">
+    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+  </div>
+  {% else %}
+  <p>Esta lista ainda não tem anúncios salvos.</p>
+  {% endfor %}
+</div>
+{% endblock %}

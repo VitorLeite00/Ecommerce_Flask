@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Anúncios{% endblock %}
+{% block content %}
+<h1>Anúncios</h1>
+
+<form method="get">
+  <label>Filtrar por categoria</label>
+  <select name="categoria" onchange="this.form.submit()">
+    <option value="">Todas</option>
+    {% for c in categorias %}
+    <option value="{{ c.id }}" {% if id_categoria == c.id %}selected{% endif %}>{{ c.nome }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<div class="grid">
+  {% for a in anuncios %}
+  <div class="card">
+    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+    <span class="badge {{ a.status }}">{{ a.status }}</span>
+  </div>
+  {% else %}
+  <p>Nenhum anúncio encontrado.</p>
+  {% endfor %}
+</div>
+{% endblock %}
