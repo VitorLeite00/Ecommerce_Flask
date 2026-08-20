@@ -2,10 +2,10 @@
 
 Projeto acadêmico desenvolvido em duas trilhas:
 
-- **Trilha 1** — estrutura inicial em Flask: MER, menu de navegação e rotas básicas
+- Trilha 1 — estrutura inicial em Flask: MER, menu de navegação e rotas básicas
   (dados mantidos em memória).
-- **Trilha 2** (esta versão) — persistência real em banco de dados (SQLite via
-  SQLAlchemy) e **CRUD completo** (criar, ler, atualizar, excluir com confirmação)
+- Trilha 2— persistência real em banco de dados (SQLite via
+  SQLAlchemy) e CRUD completo (criar, ler, atualizar, excluir com confirmação)
   para todas as entidades do MER.
 
 ## Requisitos atendidos
@@ -44,7 +44,7 @@ ecommerce_flask/
     └── static/css/style.css
 
 instance/
-└── ecommerce.db             # banco SQLite (criado automaticamente, não vai para o Git)
+└── ecommerce.db             # banco SQLite
 ```
 
 ## Como executar
