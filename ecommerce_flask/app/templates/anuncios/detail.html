@@ -7,6 +7,13 @@
 <p>{{ anuncio.descricao }}</p>
 <p><strong>Vendedor:</strong> <a href="{{ url_for('usuarios.detalhe', id_usuario=vendedor.id) }}">{{ vendedor.nome }}</a></p>
 
+{% if is_owner %}
+<p class="row-actions">
+  <a href="{{ url_for('anuncios.editar', id_anuncio=anuncio.id) }}">Editar anúncio</a>
+  <a class="excluir" href="{{ url_for('anuncios.excluir', id_anuncio=anuncio.id) }}">Excluir anúncio</a>
+</p>
+{% endif %}
+
 {% if anuncio.status == 'disponivel' %}
 <form method="post" action="{{ url_for('compras.nova') }}">
   <input type="hidden" name="id_anuncio" value="{{ anuncio.id }}">

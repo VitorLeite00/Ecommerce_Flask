@@ -113,6 +113,35 @@ button:hover { background: #1a3c5e; }
   margin-top: 6px;
 }
 .btn:hover { background: #1a3c5e; }
+.btn-secondary {
+  display: inline-block;
+  background: #888;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  text-decoration: none;
+  margin-top: 6px;
+}
+.btn-secondary:hover { background: #666; }
+.btn-danger {
+  background: #a33;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+.btn-danger:hover { background: #822; }
+.row-actions a {
+  margin-right: 10px;
+  font-size: 13px;
+  text-decoration: none;
+  color: #2c5f8a;
+}
+.row-actions a.excluir { color: #a33; }
+.row-actions a:hover { text-decoration: underline; }
 .flashes {
   list-style: none;
   padding: 10px 14px;

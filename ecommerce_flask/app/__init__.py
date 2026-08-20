@@ -1,11 +1,27 @@
+import os
+
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 
 def create_app():
-    """Application factory: cria e configura a aplicacao Flask,
-    registrando um Blueprint para cada entidade do MER."""
-    app = Flask(__name__)
+    """Application factory: cria e configura a aplicacao Flask, inicializa o
+    banco de dados (SQLite via SQLAlchemy) e registra um Blueprint para cada
+    entidade do MER."""
+    app = Flask(__name__, instance_relative_config=True)
     app.config["SECRET_KEY"] = "dev-secret-key-troque-em-producao"
+
+    os.makedirs(app.instance_path, exist_ok=True)
+    db_path = os.path.join(app.instance_path, "ecommerce.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    db.init_app(app)
+
+    # importa os modelos para que fiquem registrados no SQLAlchemy
+    from app import models  # noqa: F401
 
     from app.routes.main import main_bp
     from app.routes.usuarios import usuarios_bp
@@ -24,5 +40,11 @@ def create_app():
     app.register_blueprint(compras_bp, url_prefix="/compras")
     app.register_blueprint(favoritos_bp, url_prefix="/favoritos")
     app.register_blueprint(relatorios_bp, url_prefix="/relatorios")
+
+    with app.app_context():
+        db.create_all()
+        from app.seed import seed_data
+
+        seed_data()
 
     return app

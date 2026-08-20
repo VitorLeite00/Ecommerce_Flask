@@ -2,14 +2,21 @@
 {% block title %}Usuários{% endblock %}
 {% block content %}
 <h1>Usuários cadastrados</h1>
+<p><a class="btn" href="{{ url_for('usuarios.cadastro') }}">+ Novo Usuário</a></p>
 <table>
-  <tr><th>Nome</th><th>Email</th><th>Cadastrado em</th></tr>
+  <tr><th>Nome</th><th>Email</th><th>Cadastrado em</th><th>Ações</th></tr>
   {% for u in usuarios %}
   <tr>
     <td><a href="{{ url_for('usuarios.detalhe', id_usuario=u.id) }}">{{ u.nome }}</a></td>
     <td>{{ u.email }}</td>
     <td>{{ u.data_cadastro or '-' }}</td>
+    <td class="row-actions">
+      <a href="{{ url_for('usuarios.editar', id_usuario=u.id) }}">Editar</a>
+      <a class="excluir" href="{{ url_for('usuarios.excluir', id_usuario=u.id) }}">Excluir</a>
+    </td>
   </tr>
+  {% else %}
+  <tr><td colspan="4">Nenhum usuário cadastrado.</td></tr>
   {% endfor %}
 </table>
 {% endblock %}

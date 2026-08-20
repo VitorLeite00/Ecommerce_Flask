@@ -2,12 +2,20 @@
 {% block title %}Categorias{% endblock %}
 {% block content %}
 <h1>Categorias</h1>
-<div class="grid">
+<p><a class="btn" href="{{ url_for('categorias.nova') }}">+ Nova Categoria</a></p>
+<table>
+  <tr><th>Nome</th><th>Descrição</th><th>Ações</th></tr>
   {% for c in categorias %}
-  <div class="card">
-    <h3><a href="{{ url_for('categorias.anuncios_da_categoria', id_categoria=c.id) }}">{{ c.nome }}</a></h3>
-    <p>{{ c.descricao }}</p>
-  </div>
+  <tr>
+    <td><a href="{{ url_for('categorias.anuncios_da_categoria', id_categoria=c.id) }}">{{ c.nome }}</a></td>
+    <td>{{ c.descricao }}</td>
+    <td class="row-actions">
+      <a href="{{ url_for('categorias.editar', id_categoria=c.id) }}">Editar</a>
+      <a class="excluir" href="{{ url_for('categorias.excluir', id_categoria=c.id) }}">Excluir</a>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="3">Nenhuma categoria cadastrada.</td></tr>
   {% endfor %}
-</div>
+</table>
 {% endblock %}

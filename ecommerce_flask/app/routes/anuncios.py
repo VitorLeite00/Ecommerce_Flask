@@ -1,76 +1,102 @@
+from datetime import date
+
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from app.data import ANUNCIOS, CATEGORIAS, CURRENT_USER_ID, LISTAS_FAVORITOS, PERGUNTAS, USUARIOS
+from app import db
+from app.constants import CURRENT_USER_ID
+from app.models import Anuncio, Categoria, ListaFavoritos, Pergunta
 
 anuncios_bp = Blueprint("anuncios", __name__)
 
 
-def get_anuncio(id_anuncio):
-    return next((a for a in ANUNCIOS if a["id"] == id_anuncio), None)
-
-
 @anuncios_bp.route("/")
 def listar():
-    """Vitrine geral de anuncios, com filtro opcional ?categoria=<id>."""
+    """Read (vitrine geral), com filtro opcional ?categoria=<id>."""
     id_categoria = request.args.get("categoria", type=int)
-    anuncios = [a for a in ANUNCIOS if a["status"] == "disponivel"]
+    query = Anuncio.query.filter_by(status="disponivel")
     if id_categoria:
-        anuncios = [a for a in anuncios if a["id_categoria"] == id_categoria]
+        query = query.filter_by(id_categoria=id_categoria)
+    anuncios = query.order_by(Anuncio.data_publicacao.desc()).all()
+    categorias = Categoria.query.order_by(Categoria.nome).all()
     return render_template(
-        "anuncios/list.html", anuncios=anuncios, categorias=CATEGORIAS, id_categoria=id_categoria
+        "anuncios/list.html", anuncios=anuncios, categorias=categorias, id_categoria=id_categoria
     )
 
 
 @anuncios_bp.route("/meus")
 def meus_anuncios():
-    anuncios = [a for a in ANUNCIOS if a["id_usuario"] == CURRENT_USER_ID]
+    """Read (lista) apenas dos anuncios do usuario logado."""
+    anuncios = Anuncio.query.filter_by(id_usuario=CURRENT_USER_ID).order_by(Anuncio.id.desc()).all()
     return render_template("anuncios/meus.html", anuncios=anuncios)
 
 
 @anuncios_bp.route("/novo", methods=["GET", "POST"])
 def novo():
+    """Create."""
+    categorias = Categoria.query.order_by(Categoria.nome).all()
     if request.method == "POST":
-        novo_id = max((a["id"] for a in ANUNCIOS), default=0) + 1
-        ANUNCIOS.append(
-            {
-                "id": novo_id,
-                "titulo": request.form.get("titulo"),
-                "descricao": request.form.get("descricao"),
-                "preco": float(request.form.get("preco") or 0),
-                "data_publicacao": None,
-                "status": "disponivel",
-                "id_usuario": CURRENT_USER_ID,
-                "id_categoria": int(request.form.get("id_categoria")),
-            }
+        anuncio = Anuncio(
+            titulo=request.form.get("titulo"),
+            descricao=request.form.get("descricao"),
+            preco=float(request.form.get("preco") or 0),
+            data_publicacao=date.today(),
+            status="disponivel",
+            id_usuario=CURRENT_USER_ID,
+            id_categoria=int(request.form.get("id_categoria")),
         )
+        db.session.add(anuncio)
+        db.session.commit()
         flash("Anúncio publicado com sucesso!")
         return redirect(url_for("anuncios.meus_anuncios"))
-    return render_template("anuncios/form.html", categorias=CATEGORIAS, anuncio=None)
+    return render_template("anuncios/form.html", categorias=categorias, anuncio=None)
 
 
 @anuncios_bp.route("/<int:id_anuncio>/editar", methods=["GET", "POST"])
 def editar(id_anuncio):
-    anuncio = get_anuncio(id_anuncio)
+    """Update."""
+    anuncio = Anuncio.query.get_or_404(id_anuncio)
+    categorias = Categoria.query.order_by(Categoria.nome).all()
     if request.method == "POST":
-        anuncio["titulo"] = request.form.get("titulo")
-        anuncio["descricao"] = request.form.get("descricao")
-        anuncio["preco"] = float(request.form.get("preco") or 0)
-        anuncio["id_categoria"] = int(request.form.get("id_categoria"))
-        flash("Anúncio atualizado!")
+        anuncio.titulo = request.form.get("titulo")
+        anuncio.descricao = request.form.get("descricao")
+        anuncio.preco = float(request.form.get("preco") or 0)
+        anuncio.id_categoria = int(request.form.get("id_categoria"))
+        db.session.commit()
+        flash("Anúncio atualizado com sucesso!")
         return redirect(url_for("anuncios.meus_anuncios"))
-    return render_template("anuncios/form.html", categorias=CATEGORIAS, anuncio=anuncio)
+    return render_template("anuncios/form.html", categorias=categorias, anuncio=anuncio)
+
+
+@anuncios_bp.route("/<int:id_anuncio>/excluir", methods=["GET", "POST"])
+def excluir(id_anuncio):
+    """Delete, com tela de confirmação. Também remove perguntas, compras e
+    favoritos associados a este anúncio (cascade definido no modelo)."""
+    anuncio = Anuncio.query.get_or_404(id_anuncio)
+    if request.method == "POST":
+        db.session.delete(anuncio)
+        db.session.commit()
+        flash("Anúncio excluído com sucesso!")
+        return redirect(url_for("anuncios.meus_anuncios"))
+    return render_template(
+        "confirm_delete.html",
+        titulo="Excluir anúncio",
+        mensagem=f'Tem certeza que deseja excluir o anúncio "{anuncio.titulo}"? '
+        "Perguntas, compras e favoritos ligados a ele também serão removidos.",
+        voltar_url=url_for("anuncios.meus_anuncios"),
+    )
 
 
 @anuncios_bp.route("/<int:id_anuncio>")
 def detalhe(id_anuncio):
-    anuncio = get_anuncio(id_anuncio)
-    vendedor = next((u for u in USUARIOS if u["id"] == anuncio["id_usuario"]), None)
-    perguntas = [p for p in PERGUNTAS if p["id_anuncio"] == id_anuncio]
-    minhas_listas = [l for l in LISTAS_FAVORITOS if l["id_usuario"] == CURRENT_USER_ID]
+    """Read (detalhe)."""
+    anuncio = Anuncio.query.get_or_404(id_anuncio)
+    perguntas = Pergunta.query.filter_by(id_anuncio=id_anuncio).order_by(Pergunta.id.desc()).all()
+    minhas_listas = ListaFavoritos.query.filter_by(id_usuario=CURRENT_USER_ID).all()
     return render_template(
         "anuncios/detail.html",
         anuncio=anuncio,
-        vendedor=vendedor,
+        vendedor=anuncio.usuario,
         perguntas=perguntas,
         minhas_listas=minhas_listas,
+        is_owner=(anuncio.id_usuario == CURRENT_USER_ID),
     )

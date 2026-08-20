@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Perguntas{% endblock %}
+{% block content %}
+<h1>Todas as Perguntas</h1>
+<table>
+  <tr><th>Anúncio</th><th>Quem perguntou</th><th>Pergunta</th><th>Resposta</th><th>Ações</th></tr>
+  {% for p in perguntas %}
+  <tr>
+    <td><a href="{{ url_for('anuncios.detalhe', id_anuncio=p.id_anuncio) }}">{{ p.anuncio.titulo }}</a></td>
+    <td>{{ p.usuario.nome }}</td>
+    <td>{{ p.texto_pergunta }}</td>
+    <td>{{ p.texto_resposta or '—' }}</td>
+    <td class="row-actions">
+      <a href="{{ url_for('perguntas.editar', id_pergunta=p.id) }}">Editar</a>
+      <a class="excluir" href="{{ url_for('perguntas.excluir', id_pergunta=p.id) }}">Excluir</a>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5">Nenhuma pergunta cadastrada.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}
