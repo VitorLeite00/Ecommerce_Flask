@@ -2,11 +2,12 @@
 {% block title %}Relatório de Compras{% endblock %}
 {% block content %}
 <h1>Relatório de Compras</h1>
+<p><a href="{{ url_for('compras.listar') }}">Gerenciar todas as compras/vendas &rarr;</a></p>
 <table>
   <tr><th>Anúncio</th><th>Data</th><th>Valor</th></tr>
   {% for c in compras %}
   <tr>
-    <td>{{ anuncios_por_id[c.id_anuncio].titulo }}</td>
+    <td>{{ c.anuncio.titulo }}</td>
     <td>{{ c.data_compra or '-' }}</td>
     <td>R$ {{ '%.2f'|format(c.valor_pago) }}</td>
   </tr>

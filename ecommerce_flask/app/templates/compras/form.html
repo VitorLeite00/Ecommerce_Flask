@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}Editar Compra{% endblock %}
+{% block content %}
+<h1>Editar Compra</h1>
+<p><strong>Anúncio:</strong> {{ compra.anuncio.titulo }}</p>
+<p><strong>Comprador:</strong> {{ compra.comprador.nome }}</p>
+<form method="post">
+  <label>Valor pago (R$)</label>
+  <input type="number" step="0.01" name="valor_pago" value="{{ compra.valor_pago }}" required>
+  <button type="submit">Salvar</button>
+  <a class="btn btn-secondary" href="{{ url_for('compras.listar') }}">Cancelar</a>
+</form>
+{% endblock %}

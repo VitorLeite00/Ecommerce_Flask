@@ -5,7 +5,13 @@
 <p><a class="btn" href="{{ url_for('favoritos.nova_lista') }}">+ Nova Lista</a></p>
 <ul>
   {% for l in listas %}
-  <li><a href="{{ url_for('favoritos.detalhe', id_lista=l.id) }}">{{ l.nome_lista }}</a></li>
+  <li>
+    <a href="{{ url_for('favoritos.detalhe', id_lista=l.id) }}">{{ l.nome_lista }}</a>
+    <span class="row-actions">
+      <a href="{{ url_for('favoritos.editar', id_lista=l.id) }}">Editar</a>
+      <a class="excluir" href="{{ url_for('favoritos.excluir', id_lista=l.id) }}">Excluir</a>
+    </span>
+  </li>
   {% else %}
   <li>Você ainda não criou nenhuma lista de favoritos.</li>
   {% endfor %}

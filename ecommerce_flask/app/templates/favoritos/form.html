@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
-{% block title %}Nova Lista{% endblock %}
+{% block title %}{{ 'Editar Lista' if lista else 'Nova Lista' }}{% endblock %}
 {% block content %}
-<h1>Nova Lista de Favoritos</h1>
+<h1>{{ 'Editar Lista de Favoritos' if lista else 'Nova Lista de Favoritos' }}</h1>
 <form method="post">
   <label>Nome da lista</label>
-  <input type="text" name="nome_lista" required>
-  <button type="submit">Criar</button>
+  <input type="text" name="nome_lista" value="{{ lista.nome_lista if lista else '' }}" required>
+  <button type="submit">{{ 'Salvar' if lista else 'Criar' }}</button>
+  <a class="btn btn-secondary" href="{{ url_for('favoritos.minhas_listas') }}">Cancelar</a>
 </form>
 {% endblock %}

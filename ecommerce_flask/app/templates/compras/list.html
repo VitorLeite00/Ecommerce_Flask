@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Compras{% endblock %}
+{% block content %}
+<h1>Todas as Compras</h1>
+<table>
+  <tr><th>Anúncio</th><th>Comprador</th><th>Data</th><th>Valor</th><th>Ações</th></tr>
+  {% for c in compras %}
+  <tr>
+    <td><a href="{{ url_for('compras.detalhe', id_compra=c.id) }}">{{ c.anuncio.titulo }}</a></td>
+    <td>{{ c.comprador.nome }}</td>
+    <td>{{ c.data_compra or '-' }}</td>
+    <td>R$ {{ '%.2f'|format(c.valor_pago) }}</td>
+    <td class="row-actions">
+      <a href="{{ url_for('compras.editar', id_compra=c.id) }}">Editar</a>
+      <a class="excluir" href="{{ url_for('compras.excluir', id_compra=c.id) }}">Excluir</a>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5">Nenhuma compra registrada.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

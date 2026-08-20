@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block title %}Editar Pergunta{% endblock %}
+{% block content %}
+<h1>Editar Pergunta</h1>
+<p><strong>Anúncio:</strong> {{ pergunta.anuncio.titulo }}</p>
+<form method="post">
+  <label>Texto da pergunta</label>
+  <textarea name="texto_pergunta" required>{{ pergunta.texto_pergunta }}</textarea>
+  <label>Resposta</label>
+  <textarea name="texto_resposta">{{ pergunta.texto_resposta or '' }}</textarea>
+  <button type="submit">Salvar</button>
+  <a class="btn btn-secondary" href="{{ url_for('perguntas.listar') }}">Cancelar</a>
+</form>
+{% endblock %}

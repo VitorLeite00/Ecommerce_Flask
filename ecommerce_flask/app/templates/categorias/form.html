@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Editar Categoria' if categoria else 'Nova Categoria' }}{% endblock %}
+{% block content %}
+<h1>{{ 'Editar Categoria' if categoria else 'Nova Categoria' }}</h1>
+<form method="post">
+  <label>Nome</label>
+  <input type="text" name="nome" value="{{ categoria.nome if categoria else '' }}" required>
+  <label>Descrição</label>
+  <textarea name="descricao">{{ categoria.descricao if categoria else '' }}</textarea>
+  <button type="submit">Salvar</button>
+  <a class="btn btn-secondary" href="{{ url_for('categorias.listar') }}">Cancelar</a>
+</form>
+{% endblock %}

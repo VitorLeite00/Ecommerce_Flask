@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Detalhe da Compra{% endblock %}
+{% block content %}
+<h1>Compra #{{ compra.id }}</h1>
+<div class="box">
+  <p><strong>Anúncio:</strong> <a href="{{ url_for('anuncios.detalhe', id_anuncio=compra.anuncio.id) }}">{{ compra.anuncio.titulo }}</a></p>
+  <p><strong>Comprador:</strong> {{ compra.comprador.nome }}</p>
+  <p><strong>Data da compra:</strong> {{ compra.data_compra or '-' }}</p>
+  <p><strong>Valor pago:</strong> R$ {{ '%.2f'|format(compra.valor_pago) }}</p>
+</div>
+<p class="row-actions">
+  <a href="{{ url_for('compras.editar', id_compra=compra.id) }}">Editar</a>
+  <a class="excluir" href="{{ url_for('compras.excluir', id_compra=compra.id) }}">Excluir</a>
+</p>
+{% endblock %}

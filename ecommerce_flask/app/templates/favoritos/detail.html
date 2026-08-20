@@ -2,12 +2,16 @@
 {% block title %}{{ lista.nome_lista }}{% endblock %}
 {% block content %}
 <h1>Lista: {{ lista.nome_lista }}</h1>
+<p class="row-actions">
+  <a href="{{ url_for('favoritos.editar', id_lista=lista.id) }}">Editar nome da lista</a>
+  <a class="excluir" href="{{ url_for('favoritos.excluir', id_lista=lista.id) }}">Excluir lista</a>
+</p>
 <div class="grid">
-  {% for i in itens %}
-  {% set a = anuncios_por_id[i.id_anuncio] %}
+  {% for i in lista.itens %}
   <div class="card">
-    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
-    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=i.anuncio.id) }}">{{ i.anuncio.titulo }}</a></h3>
+    <p>R$ {{ '%.2f'|format(i.anuncio.preco) }}</p>
+    <a class="excluir" href="{{ url_for('favoritos.excluir_item', id_item=i.id) }}">Remover</a>
   </div>
   {% else %}
   <p>Esta lista ainda não tem anúncios salvos.</p>

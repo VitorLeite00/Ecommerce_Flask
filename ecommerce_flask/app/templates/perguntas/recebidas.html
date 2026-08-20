@@ -2,9 +2,10 @@
 {% block title %}Perguntas Recebidas{% endblock %}
 {% block content %}
 <h1>Perguntas Recebidas</h1>
+<p><a href="{{ url_for('perguntas.listar') }}">Ver todas as perguntas do sistema (gerenciar) &rarr;</a></p>
 {% for p in perguntas %}
 <div class="box" style="margin-bottom:12px;">
-  <p><strong>Anúncio:</strong> {{ anuncios_por_id[p.id_anuncio].titulo }}</p>
+  <p><strong>Anúncio:</strong> {{ p.anuncio.titulo }}</p>
   <p><strong>Pergunta:</strong> {{ p.texto_pergunta }}</p>
   {% if p.texto_resposta %}
     <p><strong>Resposta:</strong> {{ p.texto_resposta }}</p>
@@ -14,6 +15,10 @@
       <button type="submit">Responder</button>
     </form>
   {% endif %}
+  <p class="row-actions">
+    <a href="{{ url_for('perguntas.editar', id_pergunta=p.id) }}">Editar</a>
+    <a class="excluir" href="{{ url_for('perguntas.excluir', id_pergunta=p.id) }}">Excluir</a>
+  </p>
 </div>
 {% else %}
 <p>Nenhuma pergunta recebida ainda.</p>
