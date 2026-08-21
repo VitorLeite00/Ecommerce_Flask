@@ -3,13 +3,14 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.constants import CURRENT_USER_ID
+from app.auth import get_current_user, login_required
 from app.models import Anuncio, Pergunta
 
 perguntas_bp = Blueprint("perguntas", __name__)
 
 
 @perguntas_bp.route("/")
+@login_required
 def listar():
     """Read (lista geral de todas as perguntas do sistema)."""
     perguntas = Pergunta.query.order_by(Pergunta.id.desc()).all()
@@ -17,14 +18,16 @@ def listar():
 
 
 @perguntas_bp.route("/novo", methods=["POST"])
+@login_required
 def nova():
     """Create: usuario faz uma pergunta em um anuncio."""
+    current_user = get_current_user()
     id_anuncio = int(request.form.get("id_anuncio"))
     pergunta = Pergunta(
         texto_pergunta=request.form.get("texto_pergunta"),
         data_pergunta=date.today(),
         id_anuncio=id_anuncio,
-        id_usuario=CURRENT_USER_ID,
+        id_usuario=current_user.id,
     )
     db.session.add(pergunta)
     db.session.commit()
@@ -33,11 +36,13 @@ def nova():
 
 
 @perguntas_bp.route("/recebidas")
+@login_required
 def recebidas():
     """Read: perguntas feitas nos anuncios do usuario logado, para ele responder."""
+    current_user = get_current_user()
     perguntas = (
         Pergunta.query.join(Anuncio)
-        .filter(Anuncio.id_usuario == CURRENT_USER_ID)
+        .filter(Anuncio.id_usuario == current_user.id)
         .order_by(Pergunta.id.desc())
         .all()
     )
@@ -45,6 +50,7 @@ def recebidas():
 
 
 @perguntas_bp.route("/<int:id_pergunta>/responder", methods=["POST"])
+@login_required
 def responder(id_pergunta):
     """Update rapido: o dono do anuncio responde a pergunta."""
     pergunta = Pergunta.query.get_or_404(id_pergunta)
@@ -56,6 +62,7 @@ def responder(id_pergunta):
 
 
 @perguntas_bp.route("/<int:id_pergunta>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id_pergunta):
     """Update completo (pergunta e resposta)."""
     pergunta = Pergunta.query.get_or_404(id_pergunta)
@@ -72,6 +79,7 @@ def editar(id_pergunta):
 
 
 @perguntas_bp.route("/<int:id_pergunta>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir(id_pergunta):
     """Delete, com tela de confirmação."""
     pergunta = Pergunta.query.get_or_404(id_pergunta)

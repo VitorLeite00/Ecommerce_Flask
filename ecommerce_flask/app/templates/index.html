@@ -1,25 +1,31 @@
 {% extends 'base.html' %}
 {% block title %}Início{% endblock %}
 {% block content %}
-<h1>Bem-vindo ao Marketplace</h1>
-<p>Compre e venda produtos com facilidade. Navegue pelas categorias ou veja os anúncios em destaque abaixo.</p>
+<div class="p-4 mb-4 bg-white rounded-3 shadow-sm">
+  <h1 class="mb-2">Bem-vindo ao Marketplace</h1>
+  <p class="text-muted mb-0">Compre e venda produtos com facilidade. Navegue pelas categorias ou veja os anúncios em destaque abaixo.</p>
+</div>
 
-<h2>Anúncios em destaque</h2>
-<div class="grid">
+<h2 class="h4 mb-3">Anúncios em destaque</h2>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3 mb-4">
   {% for a in destaques %}
-  <div class="card">
-    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
-    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h3 class="h6 card-title"><a class="text-decoration-none" href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+        <p class="card-text fw-bold text-primary">R$ {{ '%.2f'|format(a.preco) }}</p>
+      </div>
+    </div>
   </div>
   {% else %}
-  <p>Nenhum anúncio disponível no momento.</p>
+  <p class="text-muted">Nenhum anúncio disponível no momento.</p>
   {% endfor %}
 </div>
 
-<h2>Categorias</h2>
-<ul>
+<h2 class="h4 mb-3">Categorias</h2>
+<div class="d-flex flex-wrap gap-2">
   {% for c in categorias %}
-  <li><a href="{{ url_for('categorias.anuncios_da_categoria', id_categoria=c.id) }}">{{ c.nome }}</a></li>
+  <a class="btn btn-outline-primary" href="{{ url_for('categorias.anuncios_da_categoria', id_categoria=c.id) }}">{{ c.nome }}</a>
   {% endfor %}
-</ul>
+</div>
 {% endblock %}

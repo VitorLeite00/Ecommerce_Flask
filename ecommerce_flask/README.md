@@ -1,12 +1,15 @@
 # Marketplace — Sistema de E-commerce (Flask)
 
-Projeto acadêmico desenvolvido em duas trilhas:
+Projeto acadêmico desenvolvido em três trilhas:
 
 - Trilha 1 — estrutura inicial em Flask: MER, menu de navegação e rotas básicas
   (dados mantidos em memória).
-- Trilha 2— persistência real em banco de dados (SQLite via
-  SQLAlchemy) e CRUD completo (criar, ler, atualizar, excluir com confirmação)
-  para todas as entidades do MER.
+- Trilha 2 — persistência real em banco de dados (SQLite via SQLAlchemy) e
+  CRUD completo (criar, ler, atualizar, excluir com confirmação) para todas as
+  entidades do MER.
+- Trilha 3 — autenticação e sessão (login/logout/cadastro reais,
+  com senha em hash e rotas protegidas), interface reformulada com Bootstrap 5 e
+  implantação no PythonAnywhere usando SQLite.
 
 ## Requisitos atendidos
 
@@ -16,8 +19,10 @@ Projeto acadêmico desenvolvido em duas trilhas:
 - Compra direta de um anúncio (sem carrinho)
 - Listas de anúncios favoritos
 - Relatório de vendas e relatório de compras do usuário
-- **CRUD completo (Create, Read, Update, Delete) para todas as entidades do MER,
-  com persistência em banco de dados e exclusão com tela de confirmação**
+- CRUD completo (Create, Read, Update, Delete) para todas as entidades do MER
+- Login/logout com sessão real e rotas protegidas (ver seção abaixo)
+- Interface responsiva com Bootstrap 5 (navbar, tabelas, formulários, cards, alerts)
+- Implantado no PythonAnywhere com SQLite
 
 ## Estrutura do projeto
 
@@ -26,28 +31,28 @@ ecommerce_flask/
 ├── run.py                  # ponto de entrada da aplicação
 ├── requirements.txt
 └── app/
-    ├── __init__.py         # application factory + SQLAlchemy + registro dos blueprints
-    ├── models.py            # modelos SQLAlchemy (7 entidades do MER)
+    ├── __init__.py         # application factory + SQLAlchemy + blueprints + current_user
+    ├── auth.py              # login_required, get_current_user (sessão Flask)
+    ├── models.py            # modelos SQLAlchemy (7 entidades do MER, senha em hash)
     ├── seed.py               # dados iniciais de demonstração (roda 1x, se o banco estiver vazio)
-    ├── constants.py           # CURRENT_USER_ID (usuário logado simulado)
+    ├── constants.py           # [obsoleto] usado até a Trilha 2
     ├── data.py                 # [obsoleto] dados em memória usados na Trilha 1
-    ├── routes/                  # um blueprint por entidade do MER, com CRUD completo
-    │   ├── main.py
-    │   ├── usuarios.py            # C/R/U/D de Usuario
-    │   ├── categorias.py          # C/R/U/D de Categoria
-    │   ├── anuncios.py            # C/R/U/D de Anuncio
-    │   ├── perguntas.py           # C/R/U/D de Pergunta
-    │   ├── compras.py             # C/R/U/D de Compra
-    │   ├── favoritos.py           # C/R/U/D de ListaFavoritos e ItemFavorito
-    │   └── relatorios.py          # consultas (somente leitura)
-    ├── templates/                 # HTML (Jinja2): listas, formulários e confirm_delete.html
-    └── static/css/style.css
+    ├── routes/                  # um blueprint por entidade do MER, com CRUD + login_required
+    │   ├── main.py                 # pública
+    │   ├── usuarios.py             # login, logout, cadastro (públicas) + CRUD (protegido)
+    │   ├── categorias.py           # listagem pública + CRUD (protegido)
+    │   ├── anuncios.py             # vitrine pública + CRUD/compra/detalhe (protegido)
+    │   ├── perguntas.py            # protegido
+    │   ├── compras.py              # protegido
+    │   ├── favoritos.py            # protegido
+    │   └── relatorios.py           # protegido
+    ├── templates/                 # HTML (Jinja2 + Bootstrap 5 via CDN)
+    └── static/css/style.css        # pequenos ajustes complementares ao Bootstrap
 
-instance/
-└── ecommerce.db             # banco SQLite
+ecommerce.db                  # banco SQLite (criado automaticamente na raiz do projeto)
 ```
 
-## Como executar
+## Como executar localmente
 
 ```bash
 python -m venv .venv
@@ -58,9 +63,24 @@ python run.py
 
 Acesse http://127.0.0.1:5000
 
-Na primeira execução, o Flask cria o arquivo `instance/ecommerce.db` (SQLite) e popula
-automaticamente algumas linhas de exemplo (`app/seed.py`), para facilitar os testes.
-Para começar do zero, basta apagar o arquivo `instance/ecommerce.db` e rodar novamente.
+Na primeira execução, o Flask cria o arquivo `ecommerce.db` (SQLite, na raiz do projeto)
+e popula automaticamente algumas linhas de exemplo (`app/seed.py`). Três
+usuários de teste (`vitor@email.com`, `ana@email.com`, `carlos@email.com`, todos com a
+senha `123456`) para facilitar o login. 
+
+## Autenticação e rotas protegidas
+
+O login é feito por sessão Flask (`session["user_id"]`), com senha armazenada como hash
+(`werkzeug.security.generate_password_hash`). O decorator `@login_required`
+(`app/auth.py`) bloqueia o acesso de quem não estiver logado, redirecionando para a
+tela de login e retomando a página original depois de autenticar.
+
+Públicas (sem login): Início, listagem de Anúncios, listagem de Categorias
+(e anúncios por categoria), Login e Cadastro.
+
+Protegidas (exigem login): todo o restante perfil e gerenciamento de usuários,
+detalhe/CRUD de anúncios, comprar, perguntar, responder perguntas, CRUD de perguntas e
+compras, favoritos e relatórios de vendas/compras.
 
 ## CRUD implementado por entidade
 
@@ -74,17 +94,14 @@ Para começar do zero, basta apagar o arquivo `instance/ecommerce.db` e rodar no
 | ListaFavoritos | `/favoritos/nova` | `/favoritos/`, `/favoritos/<id>` | `/favoritos/<id>/editar` | `/favoritos/<id>/excluir` |
 | ItemFavorito | `/favoritos/<id>/adicionar` | (dentro de `/favoritos/<id>`) | — | `/favoritos/item/<id>/excluir` |
 
-Todas as rotas de exclusão exibem uma tela de confirmação (`confirm_delete.html`) antes
-de remover o registro do banco de dados.
 
 ## Observações
 
-- Ainda não há sistema de autenticação real: um usuário fixo (`CURRENT_USER_ID`, em
-  `app/constants.py`) simula o usuário logado. As telas de Login e Cadastro já existem
-  e serão conectadas à autenticação real (ex.: Flask-Login + hash de senha) em uma
-  próxima etapa.
 - Exclusões em cascata: excluir um Usuario remove seus anúncios, perguntas, compras e
   listas de favoritos; excluir um Anuncio remove suas perguntas, compras e favoritos
-  associados; excluir uma ListaFavoritos remove seus itens. Isso é feito via
-  `cascade="all, delete-orphan"` nos relacionamentos do SQLAlchemy (`app/models.py`),
-  refletindo as cardinalidades definidas no MER da Trilha 1.
+  associados; excluir uma ListaFavoritos remove seus itens (`cascade="all, delete-orphan"`
+  em `app/models.py`), refletindo as cardinalidades definidas no MER da Trilha 1.
+- Este projeto usa uma tabela Usuario própria para autenticação (sem Flask-Login), o que
+  é suficiente para o escopo da disciplina; em um sistema de produção real, o próximo
+  passo natural seria adicionar Flask-Login (ou similar) para funcionalidades extras
+  como "lembrar-me" e proteção contra fixação de sessão.

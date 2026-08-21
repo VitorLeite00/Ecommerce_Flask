@@ -1,15 +1,19 @@
 {% extends 'base.html' %}
 {% block title %}Detalhe da Compra{% endblock %}
 {% block content %}
-<h1>Compra #{{ compra.id }}</h1>
-<div class="box">
-  <p><strong>Anúncio:</strong> <a href="{{ url_for('anuncios.detalhe', id_anuncio=compra.anuncio.id) }}">{{ compra.anuncio.titulo }}</a></p>
-  <p><strong>Comprador:</strong> {{ compra.comprador.nome }}</p>
-  <p><strong>Data da compra:</strong> {{ compra.data_compra or '-' }}</p>
-  <p><strong>Valor pago:</strong> R$ {{ '%.2f'|format(compra.valor_pago) }}</p>
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <h1 class="h3 mb-3">Compra #{{ compra.id }}</h1>
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <p class="mb-1"><strong>Anúncio:</strong> <a href="{{ url_for('anuncios.detalhe', id_anuncio=compra.anuncio.id) }}">{{ compra.anuncio.titulo }}</a></p>
+        <p class="mb-1"><strong>Comprador:</strong> {{ compra.comprador.nome }}</p>
+        <p class="mb-1"><strong>Data da compra:</strong> {{ compra.data_compra or '-' }}</p>
+        <p class="mb-0"><strong>Valor pago:</strong> R$ {{ '%.2f'|format(compra.valor_pago) }}</p>
+      </div>
+    </div>
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('compras.editar', id_compra=compra.id) }}">Editar</a>
+    <a class="btn btn-sm btn-outline-danger" href="{{ url_for('compras.excluir', id_compra=compra.id) }}">Excluir</a>
+  </div>
 </div>
-<p class="row-actions">
-  <a href="{{ url_for('compras.editar', id_compra=compra.id) }}">Editar</a>
-  <a class="excluir" href="{{ url_for('compras.excluir', id_compra=compra.id) }}">Excluir</a>
-</p>
 {% endblock %}

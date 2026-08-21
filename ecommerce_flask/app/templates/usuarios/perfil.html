@@ -1,19 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}Meu Perfil{% endblock %}
 {% block content %}
-<h1>Meu Perfil</h1>
-<div class="box">
-  <p><strong>Nome:</strong> {{ usuario.nome }}</p>
-  <p><strong>Email:</strong> {{ usuario.email }}</p>
-  <p><strong>Cadastrado em:</strong> {{ usuario.data_cadastro or '-' }}</p>
+<h1 class="h3 mb-3">Meu Perfil</h1>
+<div class="card shadow-sm mb-4">
+  <div class="card-body">
+    <p class="mb-1"><strong>Nome:</strong> {{ usuario.nome }}</p>
+    <p class="mb-1"><strong>Email:</strong> {{ usuario.email }}</p>
+    <p class="mb-0"><strong>Cadastrado em:</strong> {{ usuario.data_cadastro or '-' }}</p>
+  </div>
 </div>
 
-<h2>Meus anúncios</h2>
-<ul>
+<h2 class="h5 mb-3">Meus anúncios</h2>
+<ul class="list-group">
   {% for a in anuncios %}
-  <li><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a> — R$ {{ '%.2f'|format(a.preco) }}</li>
+  <li class="list-group-item d-flex justify-content-between">
+    <a class="text-decoration-none" href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a>
+    <span class="fw-bold text-primary">R$ {{ '%.2f'|format(a.preco) }}</span>
+  </li>
   {% else %}
-  <li>Você ainda não publicou anúncios.</li>
+  <li class="list-group-item text-muted">Você ainda não publicou anúncios.</li>
   {% endfor %}
 </ul>
 {% endblock %}

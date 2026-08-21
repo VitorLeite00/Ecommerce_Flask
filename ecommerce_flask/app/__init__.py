@@ -10,12 +10,15 @@ def create_app():
     """Application factory: cria e configura a aplicacao Flask, inicializa o
     banco de dados (SQLite via SQLAlchemy) e registra um Blueprint para cada
     entidade do MER."""
-    app = Flask(__name__, instance_relative_config=True)
-    app.config["SECRET_KEY"] = "dev-secret-key-troque-em-producao"
+    app = Flask(__name__)
 
-    os.makedirs(app.instance_path, exist_ok=True)
-    db_path = os.path.join(app.instance_path, "ecommerce.db")
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + db_path
+    # SECRET_KEY vem de variavel de ambiente em producao (configurada na aba
+    # Web do PythonAnywhere); em desenvolvimento local, usa um valor padrao.
+    app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-troque-em-producao")
+
+    # Banco de dados: SQLite, com o arquivo .db criado dentro da própria pasta
+    # do projeto (nada de MySQL nem de configuração externa de banco).
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ecommerce.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
@@ -40,6 +43,12 @@ def create_app():
     app.register_blueprint(compras_bp, url_prefix="/compras")
     app.register_blueprint(favoritos_bp, url_prefix="/favoritos")
     app.register_blueprint(relatorios_bp, url_prefix="/relatorios")
+
+    from app.auth import get_current_user
+
+    @app.context_processor
+    def inject_current_user():
+        return {"current_user": get_current_user()}
 
     with app.app_context():
         db.create_all()

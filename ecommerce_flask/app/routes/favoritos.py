@@ -3,24 +3,28 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.constants import CURRENT_USER_ID
+from app.auth import get_current_user, login_required
 from app.models import ItemFavorito, ListaFavoritos
 
 favoritos_bp = Blueprint("favoritos", __name__)
 
 
 @favoritos_bp.route("/")
+@login_required
 def minhas_listas():
     """Read (lista) das listas de favoritos do usuario logado."""
-    listas = ListaFavoritos.query.filter_by(id_usuario=CURRENT_USER_ID).all()
+    current_user = get_current_user()
+    listas = ListaFavoritos.query.filter_by(id_usuario=current_user.id).all()
     return render_template("favoritos/list.html", listas=listas)
 
 
 @favoritos_bp.route("/nova", methods=["GET", "POST"])
+@login_required
 def nova_lista():
     """Create."""
+    current_user = get_current_user()
     if request.method == "POST":
-        lista = ListaFavoritos(nome_lista=request.form.get("nome_lista"), id_usuario=CURRENT_USER_ID)
+        lista = ListaFavoritos(nome_lista=request.form.get("nome_lista"), id_usuario=current_user.id)
         db.session.add(lista)
         db.session.commit()
         flash("Lista de favoritos criada!")
@@ -29,6 +33,7 @@ def nova_lista():
 
 
 @favoritos_bp.route("/<int:id_lista>")
+@login_required
 def detalhe(id_lista):
     """Read (detalhe): anuncios salvos na lista."""
     lista = ListaFavoritos.query.get_or_404(id_lista)
@@ -36,6 +41,7 @@ def detalhe(id_lista):
 
 
 @favoritos_bp.route("/<int:id_lista>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id_lista):
     """Update: renomear a lista."""
     lista = ListaFavoritos.query.get_or_404(id_lista)
@@ -48,6 +54,7 @@ def editar(id_lista):
 
 
 @favoritos_bp.route("/<int:id_lista>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir(id_lista):
     """Delete da lista (e de todos os itens dentro dela), com confirmação."""
     lista = ListaFavoritos.query.get_or_404(id_lista)
@@ -65,6 +72,7 @@ def excluir(id_lista):
 
 
 @favoritos_bp.route("/<int:id_lista>/adicionar", methods=["POST"])
+@login_required
 def adicionar_item(id_lista):
     """Create: adiciona um anuncio a uma lista de favoritos (ItemFavorito)."""
     id_anuncio = int(request.form.get("id_anuncio"))
@@ -76,6 +84,7 @@ def adicionar_item(id_lista):
 
 
 @favoritos_bp.route("/item/<int:id_item>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir_item(id_item):
     """Delete de um item de favorito especifico, com confirmação."""
     item = ItemFavorito.query.get_or_404(id_item)

@@ -1,27 +1,33 @@
 {% extends 'base.html' %}
 {% block title %}Anúncios{% endblock %}
 {% block content %}
-<h1>Anúncios</h1>
+<h1 class="h3 mb-3">Anúncios</h1>
 
-<form method="get">
-  <label>Filtrar por categoria</label>
-  <select name="categoria" onchange="this.form.submit()">
-    <option value="">Todas</option>
-    {% for c in categorias %}
-    <option value="{{ c.id }}" {% if id_categoria == c.id %}selected{% endif %}>{{ c.nome }}</option>
-    {% endfor %}
-  </select>
+<form method="get" class="row g-2 mb-4 align-items-end">
+  <div class="col-auto">
+    <label class="form-label">Filtrar por categoria</label>
+    <select name="categoria" class="form-select" onchange="this.form.submit()">
+      <option value="">Todas</option>
+      {% for c in categorias %}
+      <option value="{{ c.id }}" {% if id_categoria == c.id %}selected{% endif %}>{{ c.nome }}</option>
+      {% endfor %}
+    </select>
+  </div>
 </form>
 
-<div class="grid">
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
   {% for a in anuncios %}
-  <div class="card">
-    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
-    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
-    <span class="badge {{ a.status }}">{{ a.status }}</span>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h3 class="h6 card-title"><a class="text-decoration-none" href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+        <p class="card-text fw-bold text-primary">R$ {{ '%.2f'|format(a.preco) }}</p>
+        <span class="badge {{ 'bg-success' if a.status == 'disponivel' else 'bg-secondary' }}">{{ a.status }}</span>
+      </div>
+    </div>
   </div>
   {% else %}
-  <p>Nenhum anúncio encontrado.</p>
+  <p class="text-muted">Nenhum anúncio encontrado.</p>
   {% endfor %}
 </div>
 {% endblock %}
