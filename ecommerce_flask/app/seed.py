@@ -3,6 +3,8 @@ apenas se as tabelas ainda estiverem vazias (idempotente)."""
 
 from datetime import date
 
+from werkzeug.security import generate_password_hash
+
 from app import db
 from app.models import (
     Anuncio,
@@ -19,9 +21,12 @@ def seed_data():
     if Usuario.query.first():
         return  # banco ja populado, nao faz nada
 
-    u1 = Usuario(nome="Vitor Leite", email="vitor@email.com", senha="123456", data_cadastro=date(2026, 1, 10))
-    u2 = Usuario(nome="Ana Souza", email="ana@email.com", senha="123456", data_cadastro=date(2026, 2, 5))
-    u3 = Usuario(nome="Carlos Lima", email="carlos@email.com", senha="123456", data_cadastro=date(2026, 3, 1))
+    # Senha de demonstracao para todos os usuarios de exemplo: "123456"
+    senha_demo = generate_password_hash("123456")
+
+    u1 = Usuario(nome="Vitor Leite", email="vitor@email.com", senha_hash=senha_demo, data_cadastro=date(2026, 1, 10))
+    u2 = Usuario(nome="Ana Souza", email="ana@email.com", senha_hash=senha_demo, data_cadastro=date(2026, 2, 5))
+    u3 = Usuario(nome="Carlos Lima", email="carlos@email.com", senha_hash=senha_demo, data_cadastro=date(2026, 3, 1))
     db.session.add_all([u1, u2, u3])
     db.session.flush()  # garante que u1.id, u2.id, u3.id ja existam
 

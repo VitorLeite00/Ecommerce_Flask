@@ -3,7 +3,7 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.constants import CURRENT_USER_ID
+from app.auth import get_current_user, login_required
 from app.models import Anuncio, Categoria, ListaFavoritos, Pergunta
 
 anuncios_bp = Blueprint("anuncios", __name__)
@@ -11,7 +11,7 @@ anuncios_bp = Blueprint("anuncios", __name__)
 
 @anuncios_bp.route("/")
 def listar():
-    """Read (vitrine geral), com filtro opcional ?categoria=<id>."""
+    """Read (vitrine geral) — pública, com filtro opcional ?categoria=<id>."""
     id_categoria = request.args.get("categoria", type=int)
     query = Anuncio.query.filter_by(status="disponivel")
     if id_categoria:
@@ -24,15 +24,19 @@ def listar():
 
 
 @anuncios_bp.route("/meus")
+@login_required
 def meus_anuncios():
     """Read (lista) apenas dos anuncios do usuario logado."""
-    anuncios = Anuncio.query.filter_by(id_usuario=CURRENT_USER_ID).order_by(Anuncio.id.desc()).all()
+    current_user = get_current_user()
+    anuncios = Anuncio.query.filter_by(id_usuario=current_user.id).order_by(Anuncio.id.desc()).all()
     return render_template("anuncios/meus.html", anuncios=anuncios)
 
 
 @anuncios_bp.route("/novo", methods=["GET", "POST"])
+@login_required
 def novo():
     """Create."""
+    current_user = get_current_user()
     categorias = Categoria.query.order_by(Categoria.nome).all()
     if request.method == "POST":
         anuncio = Anuncio(
@@ -41,7 +45,7 @@ def novo():
             preco=float(request.form.get("preco") or 0),
             data_publicacao=date.today(),
             status="disponivel",
-            id_usuario=CURRENT_USER_ID,
+            id_usuario=current_user.id,
             id_categoria=int(request.form.get("id_categoria")),
         )
         db.session.add(anuncio)
@@ -52,6 +56,7 @@ def novo():
 
 
 @anuncios_bp.route("/<int:id_anuncio>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id_anuncio):
     """Update."""
     anuncio = Anuncio.query.get_or_404(id_anuncio)
@@ -68,6 +73,7 @@ def editar(id_anuncio):
 
 
 @anuncios_bp.route("/<int:id_anuncio>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir(id_anuncio):
     """Delete, com tela de confirmação. Também remove perguntas, compras e
     favoritos associados a este anúncio (cascade definido no modelo)."""
@@ -87,16 +93,18 @@ def excluir(id_anuncio):
 
 
 @anuncios_bp.route("/<int:id_anuncio>")
+@login_required
 def detalhe(id_anuncio):
-    """Read (detalhe)."""
+    """Read (detalhe) — exige login para ver perguntas, comprar e favoritar."""
+    current_user = get_current_user()
     anuncio = Anuncio.query.get_or_404(id_anuncio)
     perguntas = Pergunta.query.filter_by(id_anuncio=id_anuncio).order_by(Pergunta.id.desc()).all()
-    minhas_listas = ListaFavoritos.query.filter_by(id_usuario=CURRENT_USER_ID).all()
+    minhas_listas = ListaFavoritos.query.filter_by(id_usuario=current_user.id).all()
     return render_template(
         "anuncios/detail.html",
         anuncio=anuncio,
         vendedor=anuncio.usuario,
         perguntas=perguntas,
         minhas_listas=minhas_listas,
-        is_owner=(anuncio.id_usuario == CURRENT_USER_ID),
+        is_owner=(anuncio.id_usuario == current_user.id),
     )

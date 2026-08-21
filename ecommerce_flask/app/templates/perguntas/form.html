@@ -1,14 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Editar Pergunta{% endblock %}
 {% block content %}
-<h1>Editar Pergunta</h1>
-<p><strong>Anúncio:</strong> {{ pergunta.anuncio.titulo }}</p>
-<form method="post">
-  <label>Texto da pergunta</label>
-  <textarea name="texto_pergunta" required>{{ pergunta.texto_pergunta }}</textarea>
-  <label>Resposta</label>
-  <textarea name="texto_resposta">{{ pergunta.texto_resposta or '' }}</textarea>
-  <button type="submit">Salvar</button>
-  <a class="btn btn-secondary" href="{{ url_for('perguntas.listar') }}">Cancelar</a>
-</form>
+<div class="row justify-content-center">
+  <div class="col-md-7">
+    <h1 class="h3 mb-3">Editar Pergunta</h1>
+    <p class="text-muted"><strong>Anúncio:</strong> {{ pergunta.anuncio.titulo }}</p>
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Texto da pergunta</label>
+            <textarea class="form-control" name="texto_pergunta" rows="2" required>{{ pergunta.texto_pergunta }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Resposta</label>
+            <textarea class="form-control" name="texto_resposta" rows="3">{{ pergunta.texto_resposta or '' }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Salvar</button>
+          <a class="btn btn-outline-secondary" href="{{ url_for('perguntas.listar') }}">Cancelar</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 {% block title %}Perguntas Recebidas{% endblock %}
 {% block content %}
-<h1>Perguntas Recebidas</h1>
-<p><a href="{{ url_for('perguntas.listar') }}">Ver todas as perguntas do sistema (gerenciar) &rarr;</a></p>
+<h1 class="h3 mb-1">Perguntas Recebidas</h1>
+<p class="mb-4"><a href="{{ url_for('perguntas.listar') }}">Ver todas as perguntas do sistema (gerenciar) &rarr;</a></p>
 {% for p in perguntas %}
-<div class="box" style="margin-bottom:12px;">
-  <p><strong>Anúncio:</strong> {{ p.anuncio.titulo }}</p>
-  <p><strong>Pergunta:</strong> {{ p.texto_pergunta }}</p>
-  {% if p.texto_resposta %}
-    <p><strong>Resposta:</strong> {{ p.texto_resposta }}</p>
-  {% else %}
-    <form method="post" action="{{ url_for('perguntas.responder', id_pergunta=p.id) }}">
-      <input type="text" name="texto_resposta" placeholder="Digite sua resposta" required>
-      <button type="submit">Responder</button>
-    </form>
-  {% endif %}
-  <p class="row-actions">
-    <a href="{{ url_for('perguntas.editar', id_pergunta=p.id) }}">Editar</a>
-    <a class="excluir" href="{{ url_for('perguntas.excluir', id_pergunta=p.id) }}">Excluir</a>
-  </p>
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <p class="mb-1"><strong>Anúncio:</strong> {{ p.anuncio.titulo }}</p>
+    <p class="mb-2"><strong>Pergunta:</strong> {{ p.texto_pergunta }}</p>
+    {% if p.texto_resposta %}
+      <p class="mb-2"><strong>Resposta:</strong> {{ p.texto_resposta }}</p>
+    {% else %}
+      <form method="post" action="{{ url_for('perguntas.responder', id_pergunta=p.id) }}" class="input-group mb-2">
+        <input type="text" class="form-control" name="texto_resposta" placeholder="Digite sua resposta" required>
+        <button type="submit" class="btn btn-primary">Responder</button>
+      </form>
+    {% endif %}
+    <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('perguntas.editar', id_pergunta=p.id) }}">Editar</a>
+    <a class="btn btn-sm btn-outline-danger" href="{{ url_for('perguntas.excluir', id_pergunta=p.id) }}">Excluir</a>
+  </div>
 </div>
 {% else %}
-<p>Nenhuma pergunta recebida ainda.</p>
+<p class="text-muted">Nenhuma pergunta recebida ainda.</p>
 {% endfor %}
 {% endblock %}

@@ -3,13 +3,14 @@ from datetime import date
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
-from app.constants import CURRENT_USER_ID
+from app.auth import get_current_user, login_required
 from app.models import Anuncio, Compra
 
 compras_bp = Blueprint("compras", __name__)
 
 
 @compras_bp.route("/")
+@login_required
 def listar():
     """Read (lista geral de todas as compras do sistema)."""
     compras = Compra.query.order_by(Compra.id.desc()).all()
@@ -17,6 +18,7 @@ def listar():
 
 
 @compras_bp.route("/<int:id_compra>")
+@login_required
 def detalhe(id_compra):
     """Read (detalhe)."""
     compra = Compra.query.get_or_404(id_compra)
@@ -24,8 +26,10 @@ def detalhe(id_compra):
 
 
 @compras_bp.route("/novo", methods=["POST"])
+@login_required
 def nova():
     """Create: usuario compra um anuncio (sem carrinho de compras)."""
+    current_user = get_current_user()
     id_anuncio = int(request.form.get("id_anuncio"))
     anuncio = Anuncio.query.get_or_404(id_anuncio)
     if anuncio.status == "disponivel":
@@ -33,7 +37,7 @@ def nova():
             data_compra=date.today(),
             valor_pago=anuncio.preco,
             id_anuncio=id_anuncio,
-            id_comprador=CURRENT_USER_ID,
+            id_comprador=current_user.id,
         )
         anuncio.status = "vendido"
         db.session.add(compra)
@@ -45,6 +49,7 @@ def nova():
 
 
 @compras_bp.route("/<int:id_compra>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id_compra):
     """Update (corrigir valor pago ou data de uma compra já registrada)."""
     compra = Compra.query.get_or_404(id_compra)
@@ -57,6 +62,7 @@ def editar(id_compra):
 
 
 @compras_bp.route("/<int:id_compra>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir(id_compra):
     """Delete, com tela de confirmação. Ao excluir, o anúncio volta a ficar disponível."""
     compra = Compra.query.get_or_404(id_compra)

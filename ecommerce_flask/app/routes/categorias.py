@@ -1,6 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app import db
+from app.auth import login_required
 from app.models import Anuncio, Categoria
 
 categorias_bp = Blueprint("categorias", __name__)
@@ -8,20 +9,21 @@ categorias_bp = Blueprint("categorias", __name__)
 
 @categorias_bp.route("/")
 def listar():
-    """Read (lista)."""
+    """Read (lista) — pública, faz parte da vitrine do site."""
     categorias = Categoria.query.order_by(Categoria.nome).all()
     return render_template("categorias/list.html", categorias=categorias)
 
 
 @categorias_bp.route("/<int:id_categoria>")
 def anuncios_da_categoria(id_categoria):
-    """Read (detalhe): anuncios disponiveis dentro da categoria."""
+    """Read (detalhe) — pública, faz parte da vitrine do site."""
     categoria = Categoria.query.get_or_404(id_categoria)
     anuncios = Anuncio.query.filter_by(id_categoria=id_categoria, status="disponivel").all()
     return render_template("categorias/anuncios.html", categoria=categoria, anuncios=anuncios)
 
 
 @categorias_bp.route("/nova", methods=["GET", "POST"])
+@login_required
 def nova():
     """Create."""
     if request.method == "POST":
@@ -34,6 +36,7 @@ def nova():
 
 
 @categorias_bp.route("/<int:id_categoria>/editar", methods=["GET", "POST"])
+@login_required
 def editar(id_categoria):
     """Update."""
     categoria = Categoria.query.get_or_404(id_categoria)
@@ -47,6 +50,7 @@ def editar(id_categoria):
 
 
 @categorias_bp.route("/<int:id_categoria>/excluir", methods=["GET", "POST"])
+@login_required
 def excluir(id_categoria):
     """Delete, com tela de confirmação. Bloqueia exclusão se houver anúncios vinculados."""
     categoria = Categoria.query.get_or_404(id_categoria)

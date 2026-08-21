@@ -1,20 +1,24 @@
 {% extends 'base.html' %}
 {% block title %}{{ lista.nome_lista }}{% endblock %}
 {% block content %}
-<h1>Lista: {{ lista.nome_lista }}</h1>
-<p class="row-actions">
-  <a href="{{ url_for('favoritos.editar', id_lista=lista.id) }}">Editar nome da lista</a>
-  <a class="excluir" href="{{ url_for('favoritos.excluir', id_lista=lista.id) }}">Excluir lista</a>
-</p>
-<div class="grid">
+<h1 class="h3 mb-2">Lista: {{ lista.nome_lista }}</h1>
+<div class="mb-3">
+  <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('favoritos.editar', id_lista=lista.id) }}">Editar nome da lista</a>
+  <a class="btn btn-sm btn-outline-danger" href="{{ url_for('favoritos.excluir', id_lista=lista.id) }}">Excluir lista</a>
+</div>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
   {% for i in lista.itens %}
-  <div class="card">
-    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=i.anuncio.id) }}">{{ i.anuncio.titulo }}</a></h3>
-    <p>R$ {{ '%.2f'|format(i.anuncio.preco) }}</p>
-    <a class="excluir" href="{{ url_for('favoritos.excluir_item', id_item=i.id) }}">Remover</a>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h3 class="h6 card-title"><a class="text-decoration-none" href="{{ url_for('anuncios.detalhe', id_anuncio=i.anuncio.id) }}">{{ i.anuncio.titulo }}</a></h3>
+        <p class="card-text fw-bold text-primary">R$ {{ '%.2f'|format(i.anuncio.preco) }}</p>
+        <a class="btn btn-sm btn-outline-danger" href="{{ url_for('favoritos.excluir_item', id_item=i.id) }}">Remover</a>
+      </div>
+    </div>
   </div>
   {% else %}
-  <p>Esta lista ainda não tem anúncios salvos.</p>
+  <p class="text-muted">Esta lista ainda não tem anúncios salvos.</p>
   {% endfor %}
 </div>
 {% endblock %}

@@ -1,18 +1,22 @@
 {% extends 'base.html' %}
 {% block title %}{{ usuario.nome }}{% endblock %}
 {% block content %}
-<h1>{{ usuario.nome }}</h1>
-<p><strong>Email:</strong> {{ usuario.email }}</p>
+<h1 class="h3 mb-3">{{ usuario.nome }}</h1>
+<p class="text-muted">{{ usuario.email }}</p>
 
-<h2>Anúncios deste usuário</h2>
-<div class="grid">
+<h2 class="h5 mb-3">Anúncios deste usuário</h2>
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
   {% for a in anuncios %}
-  <div class="card">
-    <h3><a href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
-    <p>R$ {{ '%.2f'|format(a.preco) }}</p>
+  <div class="col">
+    <div class="card h-100 shadow-sm">
+      <div class="card-body">
+        <h3 class="h6 card-title"><a class="text-decoration-none" href="{{ url_for('anuncios.detalhe', id_anuncio=a.id) }}">{{ a.titulo }}</a></h3>
+        <p class="card-text fw-bold text-primary">R$ {{ '%.2f'|format(a.preco) }}</p>
+      </div>
+    </div>
   </div>
   {% else %}
-  <p>Nenhum anúncio disponível.</p>
+  <p class="text-muted">Nenhum anúncio disponível.</p>
   {% endfor %}
 </div>
 {% endblock %}
