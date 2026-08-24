@@ -10,20 +10,16 @@ def create_app():
     """Application factory: cria e configura a aplicacao Flask, inicializa o
     banco de dados (SQLite via SQLAlchemy) e registra um Blueprint para cada
     entidade do MER."""
-    app = Flask(__name__)
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    app = Flask(__name__, instance_path=project_root)
 
-    # SECRET_KEY vem de variavel de ambiente em producao (configurada na aba
-    # Web do PythonAnywhere); em desenvolvimento local, usa um valor padrao.
     app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret-key-troque-em-producao")
 
-    # Banco de dados: SQLite, com o arquivo .db criado dentro da própria pasta
-    # do projeto (nada de MySQL nem de configuração externa de banco).
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///ecommerce.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     db.init_app(app)
 
-    # importa os modelos para que fiquem registrados no SQLAlchemy
     from app import models  # noqa: F401
 
     from app.routes.main import main_bp
